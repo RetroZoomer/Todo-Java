@@ -47,29 +47,52 @@ public class Task {
             help();
             return;
         }
+        description = line;
     }
 
-    public void print() {
-        if (description == null){
-            //временная заглушка
-            System.out.println("Пока что нет задач");
-        } else {
+    public void print(Scanner scanner) {
+        String line = scanner.nextLine().trim();
+        boolean all = line.equals("all");
+        if (!all && line.length() > 0){
+            wrongArgument();
+            return;
+        }
+        if (description != null && done != " " || all) {
             System.out.println(id + ". " + "[" + done + "] " + description);
         }
     }
 
-    public void toggle(int id) {
-        if (description == null){
-            //пусто
-        }else {
-            if (done == " ") {
-                done = "X";
-            } else {
-                done = " ";
-            }
+    public void toggle(Scanner scanner) {
+        int id = -1;
+        boolean hasId = scanner.hasNextInt();
+        if (hasId) {
+            id = scanner.nextInt();
         }
+        String tail = scanner.nextLine().trim();
+        if (tail.length() != 0) {
+            wrongArgument();
+            return;
+        }
+        if (!hasId) {
+            System.err.println("Не указан идентификатор задачи");
+            help();
+        }
+        if (description == null || id != this.id){
+            System.err.println("Задачи с таким идентификтором не существует");
+            return;
+        }
+        if (done == " ") {
+            done = "X";
+        } else {
+            done = " ";
+        }
+
     }
 
+    private static void wrongArgument() {
+        System.err.println("Недопустимый аргумент команды");
+        help();
+    }
 
 
 }
