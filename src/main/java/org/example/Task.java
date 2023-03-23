@@ -1,5 +1,9 @@
 package org.example;
 
+import java.util.Scanner;
+
+import static org.example.Main.help;
+
 public class Task {
 
     // поля класса
@@ -36,8 +40,13 @@ public class Task {
     }
 
     //методы
-    public void add(String description) {
-        this.description = description;
+    public void add(Scanner scanner) {
+        String line = scanner.nextLine().trim();
+        if (line.length() == 0) {
+            System.err.println("Необходимо ввести описание задачи");
+            help();
+            return;
+        }
     }
 
     public void print() {

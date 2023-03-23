@@ -6,22 +6,15 @@ public class Main {
     public static void main(String[] args) {
         Task task = new Task();
         int exit = 0;
-        while (exit == 0) {
-            System.out.print("1. add - добавление задачи \n" +
-                    "2. print - печать списка невыолненых задач \n" +
-                    "3. print all - печать списка всех задач \n" +
-                    "3. toggle - изменение статуса задачи \n" +
-                    "4. quit - завершение работы \n" +
-                    "Введите одну из представленных команд:");
-            Scanner console = new Scanner(System.in);
-            String choice = console.nextLine();
+        Scanner console = new Scanner(System.in);
+        while (exit != 1) {
+
+            String choice = console.next();
             choice = choice.replaceAll("\\s+","");
             switch (choice) {
                 case ("add"):
                     System.out.println();
-                    System.out.print("Введите описание задачи: ");
-                    String newTask = console.nextLine();
-                    task.add(newTask);
+                    task.add(console);
                     System.out.println();
                     break;
                 case ("print"):
@@ -52,12 +45,20 @@ public class Main {
                     System.out.println("Завершение работы!");
                     break;
                 default:
-                    System.out.println();
-                    System.out.println("Возможно вы ввели не существующую комманду или опечатались. Попробуйте снова :)");
-                    System.out.println();
+                    System.err.println("Возможно вы ввели не существующую комманду или опечатались. Попробуйте снова :)");
+                    help();
                     break;
 
             }
+
         }
+
+    }
+    public static void help() {
+        System.out.println("Возможные команды: \n" +
+                "\tadd <описание задачи> \n" +
+                "\tprint [all]\n" +
+                "\ttoggle <идентификатор задачи>\n" +
+                "\tquit");
     }
 }
