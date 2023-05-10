@@ -50,8 +50,6 @@ public class Task {
         description = line;
     }
 
-
-
     public void print(Scanner scanner) {
         String line = scanner.nextLine().trim();
         boolean all = line.equals("all");
@@ -62,6 +60,16 @@ public class Task {
         if (description != null && done != " " || all) {
             System.out.println(id + ". " + "[" + done + "] " + description);
         }
+    }
+
+    public void search(Scanner scanner) {
+        String line = scanner.nextLine().trim();
+        if (line.length() == 0) {
+            System.err.println("Необходимо ввести описание задачи");
+            help();
+            return;
+        }
+        // поиск по коллекции
     }
 
     public void toggle(Scanner scanner) {
@@ -89,6 +97,26 @@ public class Task {
             done = " ";
         }
 
+    }
+
+    public void delete(Scanner scanner) {
+        String line = scanner.nextLine().trim();
+        if (line.length() == 0) {
+            System.err.println("Необходимо ввести иденщтификатор задачи");
+            help();
+            return;
+        }
+        // удаление из коллекции
+    }
+
+    public void edit(Scanner scanner) {
+        String line = scanner.nextLine().trim();
+        if (line.length() == 0) {
+            System.err.println("Необходимо ввести иденщтификатор задачи");
+            help();
+            return;
+        }
+        // изменение элемента в коллекции
     }
 
     private static void wrongArgument() {

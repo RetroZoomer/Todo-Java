@@ -24,9 +24,24 @@ public class Main {
                     task.print(console);
                     System.out.println();
                     break;
+                case ("search"):
+                    System.out.println();
+                    //task.search(console);
+                    System.out.println();
+                    break;
                 case ("toggle"):
                     System.out.println();
                     task.toggle(console);
+                    System.out.println();
+                    break;
+                case ("delete"):
+                    System.out.println();
+                    //task.delete(console);
+                    System.out.println();
+                    break;
+                case ("edit"):
+                    System.out.println();
+                    //task.edit(console);
                     System.out.println();
                     break;
                 case ("quit"):
@@ -49,7 +64,10 @@ public class Main {
         System.out.println("Возможные команды: \n" +
                 "\tadd <описание задачи> \n" +
                 "\tprint [all]\n" +
+                "\tsearch\n" +
                 "\ttoggle <идентификатор задачи>\n" +
+                "\tdelete <идентификатор задачи>\n" +
+                "\tedit <идентификатор задачи> <новое значение>\n" +
                 "\tquit");
         helpPrinted = true;
     }
