@@ -50,6 +50,8 @@ public class Task {
         description = line;
     }
 
+
+
     public void print(Scanner scanner) {
         String line = scanner.nextLine().trim();
         boolean all = line.equals("all");
