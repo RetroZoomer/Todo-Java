@@ -1,9 +1,14 @@
 package org.example;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Scanner;
 
 import static org.example.Main.help;
 
+@Getter
+@Setter
 public class Task {
 
     // поля класса
@@ -13,31 +18,6 @@ public class Task {
 
     // конструкторы
     public Task() { }
-
-    // get, set
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getDone() {
-        return description;
-    }
-
-    public void setDone(String description) {
-        this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     //методы
     public void add(Scanner scanner) {
