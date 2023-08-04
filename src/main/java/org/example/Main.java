@@ -1,13 +1,18 @@
 package org.example;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
 
     static boolean helpPrinted = false;
     static int exit = 0;
+
+    static int ID = 0;
+    static List<Task> taskList = new ArrayList<>();
+
     public static void main(String[] args) {
-        Task task = new Task();
         Scanner console = new Scanner(System.in);
         while (exit != 1) {
 
@@ -16,22 +21,19 @@ public class Main {
             switch (choice) {
                 case ("add"):
                     System.out.println();
-                    task.add(console);
-                    System.out.println();
+                    add(console);
                     break;
                 case ("print"):
                     System.out.println();
-                    task.print(console);
+                    print(console);
+                    break;
+                case ("toggle"):
                     System.out.println();
+                    toggle(console);
                     break;
                 case ("search"):
                     System.out.println();
                     //task.search(console);
-                    System.out.println();
-                    break;
-                case ("toggle"):
-                    System.out.println();
-                    task.toggle(console);
                     System.out.println();
                     break;
                 case ("delete"):
@@ -70,5 +72,66 @@ public class Main {
                 "\tedit <идентификатор задачи> <новое значение>\n" +
                 "\tquit");
         helpPrinted = true;
+    }
+
+    private static void wrongArgument() {
+        System.err.println("Недопустимый аргумент команды");
+        help();
+    }
+
+    public static void add(Scanner scanner) {
+        String line = scanner.nextLine().trim();
+        if (line.length() == 0) {
+            System.err.println("Необходимо ввести описание задачи");
+            help();
+            return;
+        }
+        ID++;
+        taskList.add(new Task(line, ID));
+    }
+
+    public static void print(Scanner scanner) {
+        String line = scanner.nextLine().trim();
+        boolean all = line.equals("all");
+        if (!all && line.length() > 0){
+            wrongArgument();
+            return;
+        }
+        for (Task task: taskList) {
+            if (task.getDescription() != null && task.getDone() != " " || all) {
+                System.out.println(task.getId() + ". " + "[" + task.getDone() + "] " + task.getDescription());
+            }
+        }
+    }
+
+    public static void toggle(Scanner scanner) {
+        int id = -1;
+        boolean hasNextLine = scanner.hasNextLine();
+        if (hasNextLine) {
+            System.err.println("Не указан идентификатор задачи");
+            help();
+        }
+        boolean hasId = scanner.hasNextInt();
+        if (hasId) {
+            id = scanner.nextInt() - 1;
+        }
+        if (!hasId) {
+            System.err.println("Не указан идентификатор задачи");
+            help();
+        }
+        String tail = scanner.nextLine().trim();
+        if (tail.length() != 0) {
+            wrongArgument();
+            return;
+        }
+        if (id < 0 || taskList.get(id).getDescription() == null || id != taskList.get(id).getId() - 1){
+            System.err.println("Задачи с таким идентификтором не существует");
+            return;
+        }
+        if (taskList.get(id).getDone() == " ") {
+            taskList.get(id).setDone("X");
+        } else {
+            taskList.get(id).setDone(" ");
+        }
     }
 }
