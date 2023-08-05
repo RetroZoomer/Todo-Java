@@ -38,8 +38,7 @@ public class Main {
                     break;
                 case ("delete"):
                     System.out.println();
-                    //task.delete(console);
-                    System.out.println();
+                    delete(console);
                     break;
                 case ("edit"):
                     System.out.println();
@@ -106,11 +105,6 @@ public class Main {
 
     public static void toggle(Scanner scanner) {
         int id = -1;
-        boolean hasNextLine = scanner.hasNextLine();
-        if (hasNextLine) {
-            System.err.println("Не указан идентификатор задачи");
-            help();
-        }
         boolean hasId = scanner.hasNextInt();
         if (hasId) {
             id = scanner.nextInt() - 1;
@@ -118,6 +112,7 @@ public class Main {
         if (!hasId) {
             System.err.println("Не указан идентификатор задачи");
             help();
+            return;
         }
         String tail = scanner.nextLine().trim();
         if (tail.length() != 0) {
@@ -133,5 +128,25 @@ public class Main {
         } else {
             taskList.get(id).setDone(" ");
         }
+    }
+
+    public static void delete(Scanner scanner) {
+        int id = -1;
+        boolean hasId = scanner.hasNextInt();
+        if (hasId) {
+            id = scanner.nextInt() - 1;
+        }
+        if (!hasId) {
+            System.err.println("Не указан идентификатор задачи");
+            help();
+            return;
+        }
+        String tail = scanner.nextLine().trim();
+        if (tail.length() != 0) {
+            wrongArgument();
+            return;
+        }
+
+        taskList.remove(id);
     }
 }
