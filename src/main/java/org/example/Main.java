@@ -6,17 +6,14 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
-
     static boolean helpPrinted = false;
     static int exit = 0;
-
     static int ID = 0;
     static List<Task> taskList = new ArrayList<>();
 
     public static void main(String[] args) {
         Scanner console = new Scanner(System.in);
         while (exit != 1) {
-
             String choice = console.next();
             choice = choice.replaceAll("\\s+","");
             switch (choice) {
@@ -43,8 +40,7 @@ public class Main {
                 }
                 case ("edit") -> {
                     System.out.println();
-                    //task.edit(console);
-                    System.out.println();
+                    edit(console);
                 }
                 case ("quit") -> {
                     exit = 1;
@@ -78,6 +74,13 @@ public class Main {
     private static void wrongArgument() {
         System.err.println("Недопустимый аргумент команды");
         help();
+    }
+    public static boolean hasTask(int id) {
+        if (id < 0 || taskList.get(id).getDescription() == null || id != taskList.get(id).getId() - 1){
+            System.err.println("Задачи с таким идентификтором не существует");
+            return false;
+        }
+        return true;
     }
 
     public static void add(Scanner scanner) {
@@ -121,8 +124,7 @@ public class Main {
             wrongArgument();
             return;
         }
-        if (id < 0 || taskList.get(id).getDescription() == null || id != taskList.get(id).getId() - 1){
-            System.err.println("Задачи с таким идентификтором не существует");
+        if (!hasTask(id)){
             return;
         }
         if (Objects.equals(taskList.get(id).getDone(), " ")) {
@@ -150,5 +152,34 @@ public class Main {
         }
 
         taskList.remove(id);
+    }
+
+    public static void edit(Scanner scanner) {
+        int id = -1;
+        boolean hasId = scanner.hasNextInt();
+        if (hasId) {
+            id = scanner.nextInt() - 1;
+        }
+        if (!hasId) {
+            System.err.println("Не указан идентификатор задачи");
+            help();
+            return;
+        }
+        String line;
+        boolean hasLine = scanner.hasNextLine();
+        if (hasLine) {
+            line = scanner.nextLine().trim();
+        } else {
+            wrongArgument();
+            return;
+        }
+        if (line.length() == 0) {
+            wrongArgument();
+            return;
+        }
+        if (!hasTask(id)){
+            return;
+        }
+        taskList.get(id).setDescription(line);
     }
 }
