@@ -2,6 +2,7 @@ package org.example;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
@@ -19,40 +20,40 @@ public class Main {
             String choice = console.next();
             choice = choice.replaceAll("\\s+","");
             switch (choice) {
-                case ("add"):
+                case ("add") -> {
                     System.out.println();
                     add(console);
-                    break;
-                case ("print"):
+                }
+                case ("print") -> {
                     System.out.println();
                     print(console);
-                    break;
-                case ("toggle"):
+                }
+                case ("toggle") -> {
                     System.out.println();
                     toggle(console);
-                    break;
-                case ("search"):
+                }
+                case ("search") -> {
                     System.out.println();
                     //task.search(console);
                     System.out.println();
-                    break;
-                case ("delete"):
+                }
+                case ("delete") -> {
                     System.out.println();
                     delete(console);
-                    break;
-                case ("edit"):
+                }
+                case ("edit") -> {
                     System.out.println();
                     //task.edit(console);
                     System.out.println();
-                    break;
-                case ("quit"):
+                }
+                case ("quit") -> {
                     exit = 1;
                     System.out.println("Завершение работы!");
-                    break;
-                default:
+                }
+                default -> {
                     System.err.println("Возможно вы ввели не существующую комманду или опечатались. Попробуйте снова :)");
                     help();
-                    break;
+                }
             }
 
         }
@@ -62,14 +63,15 @@ public class Main {
         if (helpPrinted) {
             return;
         }
-        System.out.println("Возможные команды: \n" +
-                "\tadd <описание задачи> \n" +
-                "\tprint [all]\n" +
-                "\tsearch\n" +
-                "\ttoggle <идентификатор задачи>\n" +
-                "\tdelete <идентификатор задачи>\n" +
-                "\tedit <идентификатор задачи> <новое значение>\n" +
-                "\tquit");
+        System.out.println("""
+                Возможные команды:\s
+                \t add <описание задачи>\s
+                \t print [all]
+                \t search
+                \t toggle <идентификатор задачи>
+                \t delete <идентификатор задачи>
+                \t edit <идентификатор задачи> <новое значение>
+                \t quit""");
         helpPrinted = true;
     }
 
@@ -97,7 +99,7 @@ public class Main {
             return;
         }
         for (Task task: taskList) {
-            if (task.getDescription() != null && task.getDone() != " " || all) {
+            if (task.getDescription() != null && !Objects.equals(task.getDone(), " ") || all) {
                 System.out.println(task.getId() + ". " + "[" + task.getDone() + "] " + task.getDescription());
             }
         }
@@ -123,7 +125,7 @@ public class Main {
             System.err.println("Задачи с таким идентификтором не существует");
             return;
         }
-        if (taskList.get(id).getDone() == " ") {
+        if (Objects.equals(taskList.get(id).getDone(), " ")) {
             taskList.get(id).setDone("X");
         } else {
             taskList.get(id).setDone(" ");
