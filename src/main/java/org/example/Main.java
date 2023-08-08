@@ -1,15 +1,13 @@
 package org.example;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Stream;
 
 public class Main {
     static boolean helpPrinted = false;
     static int exit = 0;
     static int ID = 0;
-    static List<Task> taskList = new ArrayList<>();
+    static Map<Integer, Task> tasks = new LinkedHashMap<>();
 
     public static void main(String[] args) {
         Scanner console = new Scanner(System.in);
@@ -50,9 +48,7 @@ public class Main {
                     help();
                 }
             }
-
         }
-
     }
     public static void help() {
         if (helpPrinted) {
@@ -69,14 +65,25 @@ public class Main {
                 \t quit""");
         helpPrinted = true;
     }
-
     private static void wrongArgument() {
         System.err.println("Недопустимый аргумент команды");
         help();
     }
     public static boolean hasTask(int id) {
-        if (id < 0 || taskList.get(id).getDescription() == null || id != taskList.get(id).getId() - 1){
+        if (id < 0 || !tasks.containsKey(id) ||tasks.get(id).getDescription() == null){
             System.err.println("Задачи с таким идентификтором не существует");
+            return false;
+        }
+        return true;
+    }
+    public static boolean hasNextLine(String line){
+        boolean hasLine = line.equals(" ");
+        if (hasLine) {
+            wrongArgument();
+            return false;
+        }
+        if (line.length() == 0) {
+            wrongArgument();
             return false;
         }
         return true;
@@ -90,7 +97,7 @@ public class Main {
             return;
         }
         ID++;
-        taskList.add(new Task(line, ID));
+        tasks.put(ID, new Task(line));
     }
 
     public static void print(Scanner scanner) {
@@ -100,18 +107,37 @@ public class Main {
             wrongArgument();
             return;
         }
-        for (Task task: taskList) {
-            if (task.getDescription() != null && !Objects.equals(task.getDone(), " ") || all) {
-                System.out.println(task.getId() + ". " + "[" + task.getDone() + "] " + task.getDescription());
-            }
+        Stream<Map.Entry<Integer, Task>> stream = tasks.entrySet().stream();
+        if (!all) {
+            stream = stream.filter(s -> !s.getValue().isDone());
         }
+        stream.forEach(Main::printTask);
+    }
+
+    public static void printTask(Map.Entry<Integer, Task> entry) {
+        System.out.printf("%s. [%s] %s\n",
+                entry.getKey(),
+                entry.getValue().isDone() ? "X" : " ",
+                entry.getValue().getDescription());
+    }
+
+    public static void search(Scanner scanner) {
+        String line = scanner.nextLine().trim();
+        if (!hasNextLine(line)){
+            return;
+        }
+
+        tasks.entrySet()
+                .stream()
+                .filter(s -> s.getValue().getDescription().contains(line))
+                .forEach(Main::printTask);
     }
 
     public static void toggle(Scanner scanner) {
         int id = -1;
         boolean hasId = scanner.hasNextInt();
         if (hasId) {
-            id = scanner.nextInt() - 1;
+            id = scanner.nextInt();
         }
         if (!hasId) {
             System.err.println("Не указан идентификатор задачи");
@@ -126,18 +152,14 @@ public class Main {
         if (!hasTask(id)){
             return;
         }
-        if (Objects.equals(taskList.get(id).getDone(), " ")) {
-            taskList.get(id).setDone("X");
-        } else {
-            taskList.get(id).setDone(" ");
-        }
+        tasks.get(id).setDone(!tasks.get(id).isDone());
     }
 
     public static void delete(Scanner scanner) {
         int id = -1;
         boolean hasId = scanner.hasNextInt();
         if (hasId) {
-            id = scanner.nextInt() - 1;
+            id = scanner.nextInt();
         }
         if (!hasId) {
             System.err.println("Не указан идентификатор задачи");
@@ -149,71 +171,27 @@ public class Main {
             wrongArgument();
             return;
         }
-
-        taskList.remove(id);
+        tasks.remove(id);
     }
 
     public static void edit(Scanner scanner) {
         int id = -1;
         boolean hasId = scanner.hasNextInt();
         if (hasId) {
-            id = scanner.nextInt() - 1;
+            id = scanner.nextInt();
         }
         if (!hasId) {
             System.err.println("Не указан идентификатор задачи");
             help();
             return;
         }
-        String line;
-        boolean hasLine = scanner.hasNextLine();
-        if (hasLine) {
-            line = scanner.nextLine().trim();
-        } else {
-            wrongArgument();
-            return;
-        }
-        if (line.length() == 0) {
-            wrongArgument();
+        String line = scanner.nextLine().trim();
+        if (!hasNextLine(line)){
             return;
         }
         if (!hasTask(id)){
             return;
         }
-        taskList.get(id).setDescription(line);
-    }
-
-    public static void search(Scanner scanner) {
-        String line = scanner.nextLine().trim();
-
-        if (!hasNextLine(scanner, line)){
-            return;
-        }
-        String finalLine = line;
-        boolean startsWith =
-        taskList
-                .stream()
-                .anyMatch(s -> s.getDescription().startsWith(finalLine));
-        if (!startsWith){
-            System.err.println("Такой(-их) задач не найдено");
-        } else {
-            taskList
-                    .stream()
-                    .filter(s -> s.getDescription().startsWith(finalLine))
-                    .map(s -> s.getId() + ". [" + s.getDone() + "] " + s.getDescription())
-                    .forEach(System.out::println);
-        }
-    }
-
-    public static boolean hasNextLine(Scanner scanner, String line){
-        boolean hasLine = line.equals(" ");
-        if (hasLine) {
-            wrongArgument();
-            return false;
-        }
-        if (line.length() == 0) {
-            wrongArgument();
-            return false;
-        }
-        return true;
+        tasks.get(id).setDescription(line);
     }
 }
