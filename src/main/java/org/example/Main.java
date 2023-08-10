@@ -16,7 +16,7 @@ public class Main {
     static Map<Integer, Task> tasks = new LinkedHashMap<>();
     private static final Logger LOGGER = LoggerFactory.getLogger("Main");
     public static void main(String[] args) {
-        LOGGER.info("Start project");
+        LOGGER.info("START PROJECT");
         Scanner console = new Scanner(System.in);
         while (exit != 1) {
             String choice = console.next();
@@ -47,6 +47,7 @@ public class Main {
                     edit(console);
                 }
                 case ("quit") -> {
+                    LOGGER.debug("command: quit");
                     exit = 1;
                     System.out.println("Завершение работы!");
                 }
@@ -61,6 +62,7 @@ public class Main {
         if (helpPrinted) {
             return;
         }
+        LOGGER.debug("help printed");
         System.out.println("""
                 Возможные команды:\s
                 \t add <описание задачи>\s
@@ -73,11 +75,13 @@ public class Main {
         helpPrinted = true;
     }
     private static void wrongArgument() {
+        LOGGER.debug("wrong argument was entered");
         System.err.println("Недопустимый аргумент команды");
         help();
     }
     public static boolean hasTask(int id) {
         if (id < 0 || !tasks.containsKey(id) ||tasks.get(id).getDescription() == null){
+            LOGGER.error("task doesn't exist");
             System.err.println("Задачи с таким идентификтором не существует");
             return false;
         }
@@ -86,10 +90,12 @@ public class Main {
     public static boolean hasNextLine(String line){
         boolean hasLine = line.equals(" ");
         if (hasLine) {
+            LOGGER.debug("empty value");
             wrongArgument();
             return false;
         }
         if (line.length() == 0) {
+            LOGGER.debug("empty value");
             wrongArgument();
             return false;
         }
@@ -99,12 +105,14 @@ public class Main {
     public static void add(Scanner scanner) {
         String line = scanner.nextLine().trim();
         if (line.length() == 0) {
+            LOGGER.debug("The task description is empty");
             System.err.println("Необходимо ввести описание задачи");
             help();
             return;
         }
         ID++;
         tasks.put(ID, new Task(line));
+        LOGGER.debug("task: id={}, description={}", ID, tasks.get(ID).getDescription());
     }
 
     public static void print(Scanner scanner) {
@@ -119,6 +127,7 @@ public class Main {
             stream = stream.filter(s -> !s.getValue().isDone());
         }
         stream.forEach(Main::printTask);
+        LOGGER.debug(" ");
     }
 
     public static void printTask(Map.Entry<Integer, Task> entry) {
@@ -138,10 +147,11 @@ public class Main {
                 .stream()
                 .filter(s -> s.getValue().getDescription().contains(line))
                 .forEach(Main::printTask);
+        LOGGER.debug("value: substring={}", line);
     }
 
     public static void toggle(Scanner scanner) {
-        int id = -1;
+        int id;
         try {
             id = scanner.nextInt();
         } catch (InputMismatchException i){
@@ -159,6 +169,7 @@ public class Main {
             return;
         }
         tasks.get(id).setDone(!tasks.get(id).isDone());
+        LOGGER.debug("value: id={}", id);
     }
 
     public static void delete(Scanner scanner) {
@@ -177,7 +188,11 @@ public class Main {
             wrongArgument();
             return;
         }
+        if (!hasTask(id)){
+            return;
+        }
         tasks.remove(id);
+        LOGGER.debug("value: id={}", id);
     }
 
     public static void edit(Scanner scanner) {
@@ -199,5 +214,6 @@ public class Main {
             return;
         }
         tasks.get(id).setDescription(line);
+        LOGGER.debug("value: id={}, description={}", id, line);
     }
 }
