@@ -1,6 +1,12 @@
 package org.example;
 
-import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.InputMismatchException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Scanner;
 import java.util.stream.Stream;
 
 public class Main {
@@ -8,8 +14,9 @@ public class Main {
     static int exit = 0;
     static int ID = 0;
     static Map<Integer, Task> tasks = new LinkedHashMap<>();
-
+    private static final Logger LOGGER = LoggerFactory.getLogger("Main");
     public static void main(String[] args) {
+        LOGGER.info("Start project");
         Scanner console = new Scanner(System.in);
         while (exit != 1) {
             String choice = console.next();
@@ -135,12 +142,11 @@ public class Main {
 
     public static void toggle(Scanner scanner) {
         int id = -1;
-        boolean hasId = scanner.hasNextInt();
-        if (hasId) {
+        try {
             id = scanner.nextInt();
-        }
-        if (!hasId) {
+        } catch (InputMismatchException i){
             System.err.println("Не указан идентификатор задачи");
+            LOGGER.error("The task ID is not specified");
             help();
             return;
         }
