@@ -21,6 +21,7 @@ public class Main {
         while (exit != 1) {
             String choice = console.next();
             choice = choice.replaceAll("\\s+","");
+            LOGGER.debug("User input: {}", choice);
             switch (choice) {
                 case ("add") -> {
                     System.out.println();
@@ -47,7 +48,6 @@ public class Main {
                     edit(console);
                 }
                 case ("quit") -> {
-                    LOGGER.debug("command: quit");
                     exit = 1;
                     System.out.println("Завершение работы!");
                 }
@@ -62,7 +62,7 @@ public class Main {
         if (helpPrinted) {
             return;
         }
-        LOGGER.debug("help printed");
+        LOGGER.error("help printed");
         System.out.println("""
                 Возможные команды:\s
                 \t add <описание задачи>\s
@@ -75,7 +75,7 @@ public class Main {
         helpPrinted = true;
     }
     private static void wrongArgument() {
-        LOGGER.debug("wrong argument was entered");
+        LOGGER.error("wrong argument was entered");
         System.err.println("Недопустимый аргумент команды");
         help();
     }
@@ -90,12 +90,12 @@ public class Main {
     public static boolean hasNextLine(String line){
         boolean hasLine = line.equals(" ");
         if (hasLine) {
-            LOGGER.debug("empty value");
+            LOGGER.error("empty value");
             wrongArgument();
             return false;
         }
         if (line.length() == 0) {
-            LOGGER.debug("empty value");
+            LOGGER.error("empty value");
             wrongArgument();
             return false;
         }
@@ -105,7 +105,7 @@ public class Main {
     public static void add(Scanner scanner) {
         String line = scanner.nextLine().trim();
         if (line.length() == 0) {
-            LOGGER.debug("The task description is empty");
+            LOGGER.error("The task description is empty");
             System.err.println("Необходимо ввести описание задачи");
             help();
             return;
@@ -154,9 +154,9 @@ public class Main {
         int id;
         try {
             id = scanner.nextInt();
-        } catch (InputMismatchException i){
+        } catch (InputMismatchException ex){
             System.err.println("Не указан идентификатор задачи");
-            LOGGER.error("The task ID is not specified");
+            LOGGER.error("The task ID is not specified: ", ex);
             help();
             return;
         }
@@ -179,6 +179,7 @@ public class Main {
             id = scanner.nextInt();
         }
         if (!hasId) {
+            LOGGER.error("The task ID is not specified");
             System.err.println("Не указан идентификатор задачи");
             help();
             return;
@@ -202,6 +203,7 @@ public class Main {
             id = scanner.nextInt();
         }
         if (!hasId) {
+            LOGGER.error("The task ID is not specified");
             System.err.println("Не указан идентификатор задачи");
             help();
             return;
