@@ -3,6 +3,7 @@ package org.example;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.PrintStream;
 import java.util.InputMismatchException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -21,7 +22,6 @@ public class Main {
         while (exit != 1) {
             String choice = console.next();
             choice = choice.replaceAll("\\s+","");
-            LOGGER.debug("User input: {}", choice);
             switch (choice) {
                 case ("add") -> {
                     System.out.println();
@@ -112,7 +112,7 @@ public class Main {
         }
         ID++;
         tasks.put(ID, new Task(line));
-        LOGGER.debug("task: id={}, description={}", ID, tasks.get(ID).getDescription());
+        LOGGER.debug("{}", line);
     }
 
     public static void print(Scanner scanner) {
@@ -126,15 +126,17 @@ public class Main {
         if (!all) {
             stream = stream.filter(s -> !s.getValue().isDone());
         }
+        LOGGER.debug(all ? "all" : "");
         stream.forEach(Main::printTask);
-        LOGGER.debug(" ");
     }
 
     public static void printTask(Map.Entry<Integer, Task> entry) {
-        System.out.printf("%s. [%s] %s\n",
+        String out = String.format("%s. [%s] %s",
                 entry.getKey(),
                 entry.getValue().isDone() ? "X" : " ",
                 entry.getValue().getDescription());
+        System.out.println(out);
+        LOGGER.debug("User output: {}", out);
     }
 
     public static void search(Scanner scanner) {
@@ -142,12 +144,11 @@ public class Main {
         if (!hasNextLine(line)){
             return;
         }
-
+        LOGGER.debug("{}", line);
         tasks.entrySet()
                 .stream()
                 .filter(s -> s.getValue().getDescription().contains(line))
                 .forEach(Main::printTask);
-        LOGGER.debug("value: substring={}", line);
     }
 
     public static void toggle(Scanner scanner) {
@@ -169,7 +170,7 @@ public class Main {
             return;
         }
         tasks.get(id).setDone(!tasks.get(id).isDone());
-        LOGGER.debug("value: id={}", id);
+        LOGGER.debug("{}", id);
     }
 
     public static void delete(Scanner scanner) {
@@ -193,7 +194,7 @@ public class Main {
             return;
         }
         tasks.remove(id);
-        LOGGER.debug("value: id={}", id);
+        LOGGER.debug("{}", id);
     }
 
     public static void edit(Scanner scanner) {
@@ -216,6 +217,6 @@ public class Main {
             return;
         }
         tasks.get(id).setDescription(line);
-        LOGGER.debug("value: id={}, description={}", id, line);
+        LOGGER.debug("{} {}", id, line);
     }
 }
