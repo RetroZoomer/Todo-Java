@@ -1,15 +1,20 @@
 package org.example;
 
-import java.util.*;
-import java.util.stream.Stream;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.InputMismatchException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.stream.Stream;
+@Slf4j
 public class Main {
     static boolean helpPrinted = false;
     static int exit = 0;
     static int ID = 0;
     static Map<Integer, Task> tasks = new LinkedHashMap<>();
-
     public static void main(String[] args) {
+        log.info("START PROJECT");
         Scanner console = new Scanner(System.in);
         while (exit != 1) {
             String choice = console.next();
@@ -42,6 +47,7 @@ public class Main {
                 case ("quit") -> {
                     exit = 1;
                     System.out.println("Завершение работы!");
+                    log.debug("quit");
                 }
                 default -> {
                     System.err.println("Возможно вы ввели не существующую комманду или опечатались. Попробуйте снова :)");
@@ -54,6 +60,7 @@ public class Main {
         if (helpPrinted) {
             return;
         }
+        log.error("help printed");
         System.out.println("""
                 Возможные команды:\s
                 \t add <описание задачи>\s
@@ -66,11 +73,13 @@ public class Main {
         helpPrinted = true;
     }
     private static void wrongArgument() {
+        log.error("wrong argument was entered");
         System.err.println("Недопустимый аргумент команды");
         help();
     }
     public static boolean hasTask(int id) {
         if (id < 0 || !tasks.containsKey(id) ||tasks.get(id).getDescription() == null){
+            log.error("task doesn't exist");
             System.err.println("Задачи с таким идентификтором не существует");
             return false;
         }
@@ -79,10 +88,12 @@ public class Main {
     public static boolean hasNextLine(String line){
         boolean hasLine = line.equals(" ");
         if (hasLine) {
+            log.error("empty value");
             wrongArgument();
             return false;
         }
         if (line.length() == 0) {
+            log.error("empty value");
             wrongArgument();
             return false;
         }
@@ -92,12 +103,14 @@ public class Main {
     public static void add(Scanner scanner) {
         String line = scanner.nextLine().trim();
         if (line.length() == 0) {
+            log.error("The task description is empty");
             System.err.println("Необходимо ввести описание задачи");
             help();
             return;
         }
         ID++;
         tasks.put(ID, new Task(line));
+        log.debug("{}", line);
     }
 
     public static void print(Scanner scanner) {
@@ -111,14 +124,17 @@ public class Main {
         if (!all) {
             stream = stream.filter(s -> !s.getValue().isDone());
         }
+        log.debug(all ? "all" : "");
         stream.forEach(Main::printTask);
     }
 
     public static void printTask(Map.Entry<Integer, Task> entry) {
-        System.out.printf("%s. [%s] %s\n",
+        String out = String.format("%s. [%s] %s",
                 entry.getKey(),
                 entry.getValue().isDone() ? "X" : " ",
                 entry.getValue().getDescription());
+        System.out.println(out);
+        log.debug("User output: {}", out);
     }
 
     public static void search(Scanner scanner) {
@@ -126,7 +142,7 @@ public class Main {
         if (!hasNextLine(line)){
             return;
         }
-
+        log.debug("{}", line);
         tasks.entrySet()
                 .stream()
                 .filter(s -> s.getValue().getDescription().contains(line))
@@ -134,13 +150,12 @@ public class Main {
     }
 
     public static void toggle(Scanner scanner) {
-        int id = -1;
-        boolean hasId = scanner.hasNextInt();
-        if (hasId) {
+        int id;
+        try {
             id = scanner.nextInt();
-        }
-        if (!hasId) {
+        } catch (InputMismatchException ex){
             System.err.println("Не указан идентификатор задачи");
+            log.error("The task ID is not specified: ", ex);
             help();
             return;
         }
@@ -153,6 +168,7 @@ public class Main {
             return;
         }
         tasks.get(id).setDone(!tasks.get(id).isDone());
+        log.debug("{}", id);
     }
 
     public static void delete(Scanner scanner) {
@@ -162,6 +178,7 @@ public class Main {
             id = scanner.nextInt();
         }
         if (!hasId) {
+            log.error("The task ID is not specified");
             System.err.println("Не указан идентификатор задачи");
             help();
             return;
@@ -171,7 +188,11 @@ public class Main {
             wrongArgument();
             return;
         }
+        if (!hasTask(id)){
+            return;
+        }
         tasks.remove(id);
+        log.debug("{}", id);
     }
 
     public static void edit(Scanner scanner) {
@@ -181,6 +202,7 @@ public class Main {
             id = scanner.nextInt();
         }
         if (!hasId) {
+            log.error("The task ID is not specified");
             System.err.println("Не указан идентификатор задачи");
             help();
             return;
@@ -193,5 +215,6 @@ public class Main {
             return;
         }
         tasks.get(id).setDescription(line);
+        log.debug("{} {}", id, line);
     }
 }
