@@ -2,7 +2,7 @@ package org.example.application;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.example.userCommand.implСommand.Command;
+import org.example.userCommand.Command;
 import org.example.userCommand.Helper;
 
 import java.util.Scanner;
@@ -36,19 +36,19 @@ public class Application {
                 }
                 case ("toggle") -> {
                     System.out.println();
-//                    toggle(console);
+                    command.toggle(console);
                 }
                 case ("search") -> {
                     System.out.println();
-//                    search(console);
+                    command.search(console);
                 }
                 case ("delete") -> {
                     System.out.println();
-//                    delete(console);
+                    command.delete(console);
                 }
                 case ("edit") -> {
                     System.out.println();
-//                    edit(console);
+                    command.edit(console);
                 }
                 case ("quit") -> {
                     exit = true;
