@@ -2,20 +2,33 @@ package org.example.application;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.example.userCommand.Command;
-import org.example.userCommand.Helper;
+import org.example.userCommand.*;
+import org.example.userCommand.implCommand.*;
 
 import java.util.Scanner;
 @Slf4j
 @Data
 public class Application {
     private static boolean exit = false;
-
-    private Command command;
+    private CommandAdd commandAdd;
+    private CommandPrint commandPrint;
+    private CommandToggle commandToggle;
+    private CommandSearch commandSearch;
+    private CommandDelete commandDelete;
+    private CommandEdit commandEdit;
     private Helper helper;
 
-    public Application(Command command, Helper helper) {
-        this.command = command;
+    public Application(
+            CommandAdd commandAdd, CommandPrint commandPrint,
+            CommandToggle commandToggle, CommandSearch commandSearch,
+            CommandDelete commandDelete, CommandEdit commandEdit,
+            Helper helper) {
+        this.commandAdd = commandAdd;
+        this.commandPrint = commandPrint;
+        this.commandToggle = commandToggle;
+        this.commandSearch = commandSearch;
+        this.commandDelete = commandDelete;
+        this.commandEdit = commandEdit;
         this.helper = helper;
     }
 
@@ -28,27 +41,27 @@ public class Application {
             switch (choice) {
                 case ("add") -> {
                     System.out.println();
-                    command.add(console);
+                    commandAdd.realization(console);
                 }
                 case ("print") -> {
                     System.out.println();
-                    command.print(console);
+                    commandPrint.realization(console);
                 }
                 case ("toggle") -> {
                     System.out.println();
-                    command.toggle(console);
+                    commandToggle.realization(console);
                 }
                 case ("search") -> {
                     System.out.println();
-                    command.search(console);
+                    commandSearch.realization(console);
                 }
                 case ("delete") -> {
                     System.out.println();
-                    command.delete(console);
+                    commandDelete.realization(console);
                 }
                 case ("edit") -> {
                     System.out.println();
-                    command.edit(console);
+                    commandEdit.realization(console);
                 }
                 case ("quit") -> {
                     exit = true;
